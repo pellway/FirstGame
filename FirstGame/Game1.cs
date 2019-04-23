@@ -9,6 +9,7 @@ namespace FirstGame
     /// </summary>
     public class Game1 : Game
     {
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
@@ -28,6 +29,11 @@ namespace FirstGame
 
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
+
+            // Define Window Size
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            graphics.ApplyChanges();
             Content.RootDirectory = "Content";
         }
 
@@ -88,19 +94,19 @@ namespace FirstGame
             animatedSprite.Update();
 
             KeyboardState state = Keyboard.GetState();
-            if (state.IsKeyDown(Keys.Left))
+            if (state.IsKeyDown(Keys.Left) && shuttleXPos >= 0)
             {
                 shuttleXPos = shuttleXPos - speedOffset;
             }
-            if (state.IsKeyDown(Keys.Right))
+            if (state.IsKeyDown(Keys.Right) && shuttleXPos <= 1280 - 142)
             {
                 shuttleXPos = shuttleXPos + speedOffset;
             }
-            if (state.IsKeyDown(Keys.Up))
+            if (state.IsKeyDown(Keys.Up) && shuttleYPos >= 0)
             {
                 shuttleYPos = shuttleYPos - speedOffset;
             }
-            if (state.IsKeyDown(Keys.Down))
+            if (state.IsKeyDown(Keys.Down) && shuttleYPos <= 720 - 220)
             {
                 shuttleYPos = shuttleYPos + speedOffset;
             }
@@ -119,7 +125,7 @@ namespace FirstGame
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            spriteBatch.Draw(background, new Rectangle(0, 0, 800, 480), Color.White);
+            spriteBatch.Draw(background, new Rectangle(0, 0, 1280, 720), Color.White);
             spriteBatch.Draw(shuttle, new Vector2(shuttleXPos, shuttleYPos), Color.White);
             spriteBatch.End();
 
