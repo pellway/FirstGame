@@ -22,8 +22,14 @@ namespace FirstGame
         private int shuttleYPos = 240;
         private int speedOffset = 2;
 
+        private int enemyXPos = 400;
+        private int enemyYPos = 200;
+        private bool enemyGoRight = true;
+        private bool enemyGoLeft = false;
+
         private SpriteFont font;
-        private int score = 0;
+        private int time = 0;
+        private int timeDisplay = 0;
 
         private AnimatedSprite animatedSprite;
 
@@ -89,16 +95,39 @@ namespace FirstGame
                 Exit();
 
             // TODO: Add your update logic here
-            score++;
+
+            time++;
+            if (time % 60 == 0)
+            {
+                timeDisplay++;
+            }
 
             animatedSprite.Update();
 
+            if (enemyXPos == 400)
+            {
+                enemyGoRight = true;
+                enemyGoLeft = false;
+            }
+            if (enemyXPos == 880)
+            {
+                enemyGoRight = false;
+                enemyGoLeft = true;
+            }
+            if (enemyGoRight == true)
+            {
+                enemyXPos++;
+            }
+            if (enemyGoLeft == true)
+            {
+                enemyXPos--;
+            }
             KeyboardState state = Keyboard.GetState();
             if (state.IsKeyDown(Keys.Left) && shuttleXPos >= 0)
             {
                 shuttleXPos = shuttleXPos - speedOffset;
             }
-            if (state.IsKeyDown(Keys.Right) && shuttleXPos <= 1280 - 142)
+            if (state.IsKeyDown(Keys.Right) && shuttleXPos <= 1280 - 42)
             {
                 shuttleXPos = shuttleXPos + speedOffset;
             }
@@ -106,7 +135,7 @@ namespace FirstGame
             {
                 shuttleYPos = shuttleYPos - speedOffset;
             }
-            if (state.IsKeyDown(Keys.Down) && shuttleYPos <= 720 - 220)
+            if (state.IsKeyDown(Keys.Down) && shuttleYPos <= 720 - 52)
             {
                 shuttleYPos = shuttleYPos + speedOffset;
             }
@@ -130,7 +159,7 @@ namespace FirstGame
             spriteBatch.End();
 
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, "Score is: " + score, new Vector2(50, 50), Color.White);
+            spriteBatch.DrawString(font, "Time Elapsed: " + timeDisplay + " Seconds", new Vector2(50, 50), Color.White);
             spriteBatch.End();
 
             spriteBatch.Begin();
@@ -140,7 +169,8 @@ namespace FirstGame
             spriteBatch.Draw(arrow, location, sourceRectangle, Color.White, angle, origin, 1.0f, SpriteEffects.None, 1);
             spriteBatch.End();
 
-            animatedSprite.Draw(spriteBatch, new Vector2(400, 200));
+
+            animatedSprite.Draw(spriteBatch, new Vector2(enemyXPos, enemyYPos));
 
             base.Draw(gameTime);
         }
