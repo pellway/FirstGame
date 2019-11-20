@@ -12,13 +12,16 @@ namespace FirstGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        // Window size
+        private int windowHeight = 700;
+        private int windowWidth = 500;
+
         // Manages game states
         private int GameStatus = 0;
         private readonly int StartScreen = 1;
         private readonly int ExitScreen = 2;
         private readonly int PlayScreen = 3;
         private readonly int PauseScreen = 4;
-        
         
         private Texture2D startButton;
         private Texture2D exitButton;
@@ -32,12 +35,12 @@ namespace FirstGame
         private float angle = 0;
 
         // Position of player
-        private int shuttleXPos = 450;
+        private int shuttleXPos = 250;
         private int shuttleYPos = 240;
-        private int speedOffset = 2;
+        private int speedOffset = 4;
 
         // Position of enemy
-        private int enemyXPos = 400;
+        private int enemyXPos = 250;
         private int enemyYPos = 200;
         private bool enemyGoRight = true;
         private bool enemyGoLeft = false;
@@ -52,8 +55,8 @@ namespace FirstGame
             graphics = new GraphicsDeviceManager(this);
 
             // Define Window Size
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferHeight = windowHeight;
+            graphics.PreferredBackBufferWidth = windowWidth;
             graphics.ApplyChanges();
             Content.RootDirectory = "Content";
         }
@@ -70,8 +73,8 @@ namespace FirstGame
             IsMouseVisible = true;
 
             // Set position of buttons
-            startButtonPos = new Vector2((GraphicsDevice.Viewport.Width / 2) - 50, 200);
-            exitButtonPos = new Vector2((GraphicsDevice.Viewport.Width / 2) - 50, 250);
+            startButtonPos = new Vector2((windowWidth / 2) - 50, 200);
+            exitButtonPos = new Vector2((windowWidth / 2) - 50, 250);
 
             // Set game state to start menu
             GameStatus = StartScreen;
@@ -118,17 +121,29 @@ namespace FirstGame
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime) {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 Exit();
 
-            if (GameStatus == StartScreen) {
-
+            if (GameStatus == StartScreen)
+            {
                 KeyboardState state = Keyboard.GetState();
-                if (state.IsKeyDown(Keys.S)) {
+                if (state.IsKeyDown(Keys.Enter)) {
                     GameStatus = PlayScreen;
                 }
-                if (state.IsKeyDown(Keys.E)) {
-                    //GameStatus = PlayScreen;
+                if (state.IsKeyDown(Keys.Escape)) {
+                    Exit();
+                }
+            }
+
+            if (GameStatus == PauseScreen)
+            {
+                KeyboardState state = Keyboard.GetState();
+                if (state.IsKeyDown(Keys.Enter))
+                {
+                    GameStatus = PlayScreen;
+                }
+                if (state.IsKeyDown(Keys.Escape))
+                {
                     Exit();
                 }
             }
@@ -142,11 +157,11 @@ namespace FirstGame
 
                 animatedSprite.Update();
 
-                if (enemyXPos == 400) {
+                if (enemyXPos == 0) {
                     enemyGoRight = true;
                     enemyGoLeft = false;
                 }
-                if (enemyXPos == 880) {
+                if (enemyXPos == windowWidth - 64) {
                     enemyGoRight = false;
                     enemyGoLeft = true;
                 }
@@ -160,20 +175,22 @@ namespace FirstGame
                 if (state.IsKeyDown(Keys.Left) && shuttleXPos >= 0) {
                     shuttleXPos -= speedOffset;
                 }
-                if (state.IsKeyDown(Keys.Right) && shuttleXPos <= 1280 - 42) {
+                if (state.IsKeyDown(Keys.Right) && shuttleXPos <= windowWidth - 42) {
                     shuttleXPos += speedOffset;
                 }
-                if (state.IsKeyDown(Keys.Up) && shuttleYPos >= 0) {
+                if (state.IsKeyDown(Keys.Up) && shuttleYPos > 0) {
                     shuttleYPos -= speedOffset;
                 }
-                if (state.IsKeyDown(Keys.Down) && shuttleYPos <= 720 - 52) {
+                if (state.IsKeyDown(Keys.Down) && shuttleYPos <= windowHeight - 52) {
                     shuttleYPos += speedOffset;
                 }
 
                 angle += 0.01f;
+
+                if (state.IsKeyDown(Keys.E)) GameStatus = PauseScreen;
             }
-             
-            base.Update(gameTime);
+
+            if (GameStatus == PlayScreen) base.Update(gameTime);
         }
 
         /// <summary>
@@ -191,7 +208,7 @@ namespace FirstGame
                 spriteBatch.Draw(exitButton, exitButtonPos, Color.White);
                 spriteBatch.End();
             }
-            
+
             if (GameStatus == PlayScreen)
             {
                 spriteBatch.Begin();
@@ -208,7 +225,31 @@ namespace FirstGame
                 animatedSprite.Draw(spriteBatch, new Vector2(enemyXPos, enemyYPos));
                 spriteBatch.End();
             }
-            
+
+            // Draw pause menu
+            if (GameStatus == PauseScreen)
+            {
+                spriteBatch.Begin();
+
+                spriteBatch.Draw(background, new Rectangle(0, 0, 1280, 720), Color.White);
+                spriteBatch.Draw(shuttle, new Vector2(shuttleXPos, shuttleYPos), Color.White);
+
+                spriteBatch.DrawString(font, "Time Elapsed: " + timeDisplay + " Seconds", new Vector2(50, 50), Color.White);
+
+                Vector2 location = new Vector2(400, 200);
+                Rectangle sourceRectangle = new Rectangle(0, 0, arrow.Width, arrow.Height);
+                Vector2 origin = new Vector2(arrow.Width / 2, arrow.Height / 2);
+                spriteBatch.Draw(arrow, location, sourceRectangle, Color.White, angle, origin, 1.0f, SpriteEffects.None, 1);
+
+                animatedSprite.Draw(spriteBatch, new Vector2(enemyXPos, enemyYPos));
+
+                // Above is same as PlayScreen, below is pause
+                spriteBatch.Draw(background, new Rectangle(0, 0, 1280, 720), Color.White * 0.35f);
+                spriteBatch.Draw(startButton, startButtonPos, Color.White);
+                spriteBatch.Draw(exitButton, exitButtonPos, Color.White);
+                spriteBatch.End();
+            }
+
             base.Draw(gameTime);
         }
     }
