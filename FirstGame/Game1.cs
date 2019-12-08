@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 
 namespace FirstGame
 {
@@ -45,9 +46,13 @@ namespace FirstGame
         private bool enemyGoRight = true;
         private bool enemyGoLeft = false;
 
+        // Fonts attributes for text
         private SpriteFont font;
         private int time = 0;
         private int timeDisplay = 0;
+
+        // BGM for game
+        private SoundEffect bgm;
 
         private AnimatedSprite animatedSprite;
 
@@ -86,9 +91,10 @@ namespace FirstGame
         /// all of your content.
         /// </summary>
         protected override void LoadContent() {
-            
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+
+
+        // Create a new SpriteBatch, which can be used to draw textures.
+        spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Load resources
             startButton = Content.Load<Texture2D>("button/start");
@@ -99,6 +105,10 @@ namespace FirstGame
             arrow = Content.Load<Texture2D>("sprite/arrow");
 
             font = Content.Load<SpriteFont>("Arial");
+
+            // Audio settings for gameplay
+            bgm = Content.Load<SoundEffect>("audio/test_bgm");
+            bgm.Play();
 
             Texture2D texture = Content.Load<Texture2D>("sprite/smiley");
             // Numbers determine rows and columns of Sprite Map
@@ -209,6 +219,7 @@ namespace FirstGame
                 spriteBatch.End();
             }
 
+            // Draw play screen
             if (GameStatus == PlayScreen)
             {
                 spriteBatch.Begin();

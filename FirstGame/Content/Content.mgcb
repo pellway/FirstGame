@@ -20,6 +20,12 @@
 /processorParam:TextureFormat=Compressed
 /build:Arial.spritefont
 
+#begin audio/test_BGM.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/test_BGM.wav
+
 #begin background/stars.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
